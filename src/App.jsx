@@ -1,73 +1,68 @@
-function App() {
+import React, { useEffect, useMemo, useState } from 'react';
+import Spline from '@splinetool/react-spline';
+import { NeonLayout } from './components/NeonLayout';
+import NavShell from './components/NavShell';
+import Onboarding from './components/Onboarding';
+import { Dashboard, Placeholder } from './components/screens';
+
+const themePresets = {
+  blue: '#00E5FF',
+  purple: '#A855F7',
+  cyan: '#22D3EE',
+  pink: '#EC4899',
+};
+
+export default function App() {
+  const [theme, setTheme] = useState({ color: themePresets.blue, opacity: 0.18, glow: 0.6, font: 'Inter', minimal: false });
+  const [onboarded, setOnboarded] = useState(() => !!localStorage.getItem('umax_onboarded'));
+
+  useEffect(() => {
+    if (onboarded) localStorage.setItem('umax_onboarded', '1');
+  }, [onboarded]);
+
+  const background = (
+    <div className="absolute inset-0">
+      <div className="absolute inset-x-0 -top-10 h-[420px]">
+        <Spline scene="https://prod.spline.design/qQUip0dJPqrrPryE/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+      </div>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#0b0f1a] to-[#0b0f1a]" />
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]"></div>
-
-      <div className="relative min-h-screen flex items-center justify-center p-8">
-        <div className="max-w-2xl w-full">
-          {/* Header with Flames icon */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center mb-6">
-              <img
-                src="/flame-icon.svg"
-                alt="Flames"
-                className="w-24 h-24 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
-              />
+    <NeonLayout settings={theme} background={background}
+      header={
+        <div className="px-4 sm:px-6 lg:px-10 pt-6">
+          <div className="flex items-center justify-between">
+            <div className="text-white/80 text-sm">Self-Mastery</div>
+            <div className="flex items-center gap-3 text-xs text-white/60">
+              <div className="hidden sm:block">Futuristic • Neon • Glass</div>
             </div>
-
-            <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-              Flames Blue
-            </h1>
-
-            <p className="text-xl text-blue-200 mb-6">
-              Build applications through conversation
-            </p>
-          </div>
-
-          {/* Instructions */}
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-8 shadow-xl mb-6">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Describe your idea</h3>
-                <p className="text-blue-200/80 text-sm">Use the chat panel on the left to tell the AI what you want to build</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Watch it build</h3>
-                <p className="text-blue-200/80 text-sm">Your app will appear in this preview as the AI generates the code</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Refine and iterate</h3>
-                <p className="text-blue-200/80 text-sm">Continue the conversation to add features and make changes</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center">
-            <p className="text-sm text-blue-300/60">
-              No coding required • Just describe what you want
-            </p>
           </div>
         </div>
-      </div>
-    </div>
-  )
+      }
+    >
+      {!onboarded ? (
+        <Onboarding onDone={()=>setOnboarded(true)} setTheme={(t)=> setTheme((s)=> ({ ...s, ...t }))} />
+      ) : (
+        <NavShell theme={theme}>
+          <div className="space-y-6">
+            <Dashboard theme={theme} />
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <Placeholder title="Habit Builder" description="Create unlimited habits with icons, glow colors, schedules and analytics." theme={theme} />
+              <Placeholder title="Routine Builder" description="Morning, afternoon, night flows with timers and smooth progress." theme={theme} />
+              <Placeholder title="Task Manager" description="To-dos, deadlines, pomodoro, drag-and-drop and calendar view." theme={theme} />
+              <Placeholder title="AI Coach" description="Responds to your mood, goals and habits; auto plan at 5AM." theme={theme} />
+              <Placeholder title="Journal" description="Daily entries with templates and optional lock." theme={theme} />
+              <Placeholder title="Mood Tracker" description="Pick mood, add reason and see weekly trends." theme={theme} />
+              <Placeholder title="Money Hub" description="Income, savings, goals and money challenges with neon progress." theme={theme} />
+              <Placeholder title="Fitness & Glow-Up" description="Track body, skincare, gym routines and weekly checklist." theme={theme} />
+              <Placeholder title="Explore Challenges" description="7-day discipline, 30-day glow up, money challenges + AI suggestions." theme={theme} />
+              <Placeholder title="Settings" description="Full UI customization, colors, fonts, notifications and backups." theme={theme} />
+            </div>
+          </div>
+        </NavShell>
+      )}
+    </NeonLayout>
+  );
 }
-
-export default App
